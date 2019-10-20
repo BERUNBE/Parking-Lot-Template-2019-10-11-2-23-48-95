@@ -8,4 +8,7 @@ public class ParkingLotService {
         return null;
     }
 
+    public boolean deleteParkingLot(ParkingLot parkingLot) {
+        return false;
+    }
 }

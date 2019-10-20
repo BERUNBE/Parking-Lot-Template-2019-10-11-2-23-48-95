@@ -19,4 +19,12 @@ public class ParkingLotController {
         return new ResponseEntity<>(parkingLotService.createParkingLot(parkingLot), HttpStatus.CREATED);
     }
 
+    @DeleteMapping(produces = {"application/json"})
+    public ResponseEntity<Void> deleteParkingLot(@RequestBody ParkingLot parkingLot) {
+        if (parkingLotService.deleteParkingLot(parkingLot)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }
