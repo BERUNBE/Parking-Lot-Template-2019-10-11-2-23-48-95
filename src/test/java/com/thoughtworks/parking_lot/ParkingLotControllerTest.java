@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,6 +51,17 @@ public class ParkingLotControllerTest {
                 .content(mapToJson(parkingLot)));
 
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    void getParkingLot_should_return_one_parking_lot_by_name_and_status_code_200() throws Exception {
+        ParkingLot parkingLot = createParkingLot("Alpha");
+        when(parkingLotService.getParkingLotByName("Alpha")).thenReturn(parkingLot);
+
+        ResultActions result = mvc.perform(get("/parkinglots/Alpha"));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Alpha"));
     }
 
     private ParkingLot createParkingLot(String name) {

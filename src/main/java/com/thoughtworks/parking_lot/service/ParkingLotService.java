@@ -11,4 +11,8 @@ public class ParkingLotService {
     public boolean deleteParkingLot(ParkingLot parkingLot) {
         return false;
     }
+
+    public ParkingLot getParkingLotByName(String name) {
+        return null;
+    }
 }

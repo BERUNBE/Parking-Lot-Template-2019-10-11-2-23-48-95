@@ -27,4 +27,9 @@ public class ParkingLotController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(path = "/{name}", produces = {"application/json"})
+    public ResponseEntity<ParkingLot> getParkingLotByName(@PathVariable String name) {
+        return new ResponseEntity<>(parkingLotService.getParkingLotByName(name), HttpStatus.OK);
+    }
 }
