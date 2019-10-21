@@ -53,6 +53,15 @@ public class ParkingLotControllerTest {
     }
 
     @Test
+    void deleteParkingLot_should_return_status_code_400_when_not_found() throws Exception {
+        when(parkingLotService.deleteParkingLotByName(any())).thenReturn(false);
+
+        ResultActions result = mvc.perform(delete("/parkinglots/Alpha"));
+
+        result.andExpect(status().isBadRequest());
+    }
+
+    @Test
     void getParkingLotByName_should_return_one_parking_lot_by_name_and_status_code_200() throws Exception {
         ParkingLot parkingLot = createParkingLot("Alpha");
         when(parkingLotService.getParkingLotByName("Alpha")).thenReturn(parkingLot);
@@ -89,6 +98,17 @@ public class ParkingLotControllerTest {
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.capacity").value(50));
+    }
+
+    @Test
+    void updateParkingLotCapacity_should_return_status_code_400_when_attempting_to_update_non_existing_parkinglot() throws Exception {
+        when(parkingLotService.updateParkingLotCapacity("Alpha", 50)).thenReturn(null);
+
+        ResultActions result = mvc.perform(patch("/parkinglots/Alpha")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(Integer.valueOf("50"))));
+
+        result.andExpect(status().isBadRequest());
     }
 
     private ParkingLot createParkingLot(String name) {
