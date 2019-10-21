@@ -22,4 +22,8 @@ public class ParkingLotService {
     public List<ParkingLot> getParkingLots(int page) {
         return new ArrayList<>();
     }
+
+    public ParkingLot updateParkingLotCapacity(String name, int capacity) {
+        return null;
+    }
 }

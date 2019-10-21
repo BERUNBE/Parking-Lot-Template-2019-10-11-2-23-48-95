@@ -39,4 +39,14 @@ public class ParkingLotController {
     public ResponseEntity<List<ParkingLot>> getParkingLots(@RequestParam(required = false, defaultValue = "0") int page) {
         return new ResponseEntity<>(parkingLotService.getParkingLots(page), HttpStatus.OK);
     }
+
+    @PatchMapping(path = "/{name}", produces = {"application/json"})
+    public ResponseEntity<ParkingLot> updateParkingLotCapacity(@PathVariable String name, @RequestBody int capacity) {
+        ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity(name, capacity);
+        if (updatedParkingLot != null) {
+            return new ResponseEntity<>(updatedParkingLot, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

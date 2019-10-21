@@ -81,6 +81,20 @@ public class ParkingLotControllerTest {
                 .andExpect(jsonPath("$[1].name").value("Bravo"));
     }
 
+    @Test
+    void updateParkingLotCapacity_should_update_parking_lot_capacity_and_return_updated_parking_lot_and_status_code_200() throws Exception {
+        ParkingLot parkingLot = createParkingLot("Alpha");
+        parkingLot.setCapacity(50);
+        when(parkingLotService.updateParkingLotCapacity("Alpha", 50)).thenReturn(parkingLot);
+
+        ResultActions result = mvc.perform(patch("/parkinglots/Alpha")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(Integer.valueOf("50"))));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.capacity").value(50));
+    }
+
     private ParkingLot createParkingLot(String name) {
         ParkingLot parkingLot = new ParkingLot();
         parkingLot.setName(name);
