@@ -2,6 +2,7 @@ package com.thoughtworks.parking_lot.controller;
 
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,9 @@ public class ParkingLotController {
     }
 
     @DeleteMapping(path = "/{name}", produces = {"application/json"})
-    public ResponseEntity<Void> deleteParkingLot(@PathVariable String name) {
-        if (parkingLotService.deleteParkingLotByName(name)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Void> deleteParkingLot(@PathVariable String name) throws NotFoundException {
+        parkingLotService.deleteParkingLotByName(name);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(path = "/{name}", produces = {"application/json"})
@@ -39,12 +37,8 @@ public class ParkingLotController {
     }
 
     @PatchMapping(path = "/{name}", produces = {"application/json"})
-    public ResponseEntity<ParkingLot> updateParkingLotCapacity(@PathVariable String name, @RequestBody int capacity) {
+    public ResponseEntity<ParkingLot> updateParkingLotCapacity(@PathVariable String name, @RequestBody int capacity) throws NotFoundException {
         ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity(name, capacity);
-        if (updatedParkingLot != null) {
-            return new ResponseEntity<>(updatedParkingLot, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(updatedParkingLot, HttpStatus.OK);
     }
 }

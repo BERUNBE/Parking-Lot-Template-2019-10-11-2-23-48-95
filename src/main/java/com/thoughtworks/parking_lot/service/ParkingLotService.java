@@ -2,6 +2,7 @@ package com.thoughtworks.parking_lot.service;
 
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,12 @@ public class ParkingLotService {
         return parkingLotRepository.save(parkingLot);
     }
 
-    public boolean deleteParkingLotByName(String name) {
+    public void deleteParkingLotByName(String name) throws NotFoundException {
         Optional<ParkingLot> parkingLotToDelete = parkingLotRepository.findById(name);
         if (parkingLotToDelete.isPresent()) {
             parkingLotRepository.delete(parkingLotToDelete.get());
-            return true;
         } else {
-            return false;
+            throw new NotFoundException("Parking lot with name: '" + name + "' not found.");
         }
     }
 
@@ -38,13 +38,13 @@ public class ParkingLotService {
         return parkingLotRepository.findAll(PageRequest.of(page, PAGE_SIZE));
     }
 
-    public ParkingLot updateParkingLotCapacity(String name, int capacity) {
+    public ParkingLot updateParkingLotCapacity(String name, int capacity) throws NotFoundException {
         Optional<ParkingLot> parkingLotToUpdate = parkingLotRepository.findById(name);
         if (parkingLotToUpdate.isPresent()) {
             parkingLotToUpdate.get().setCapacity(capacity);
             return parkingLotToUpdate.get();
         } else {
-            return null;
+            throw new NotFoundException("Parking lot with name: '" + name + "' not found.");
         }
     }
 }

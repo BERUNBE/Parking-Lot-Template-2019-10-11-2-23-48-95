@@ -4,15 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -45,8 +48,6 @@ public class ParkingLotControllerTest {
 
     @Test
     void deleteParkingLot_should_return_status_code_200() throws Exception {
-        when(parkingLotService.deleteParkingLotByName(any())).thenReturn(true);
-
         ResultActions result = mvc.perform(delete("/parkinglots/Alpha"));
 
         result.andExpect(status().isOk());
@@ -54,11 +55,12 @@ public class ParkingLotControllerTest {
 
     @Test
     void deleteParkingLot_should_return_status_code_404_when_not_found() throws Exception {
-        when(parkingLotService.deleteParkingLotByName(any())).thenReturn(false);
+        doThrow(NotFoundException.class).when(parkingLotService).deleteParkingLotByName(any());
 
         ResultActions result = mvc.perform(delete("/parkinglots/Alpha"));
 
-        result.andExpect(status().isNotFound());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()));
     }
 
     @Test
@@ -102,13 +104,14 @@ public class ParkingLotControllerTest {
 
     @Test
     void updateParkingLotCapacity_should_return_status_code_404_when_attempting_to_update_non_existing_parkinglot() throws Exception {
-        when(parkingLotService.updateParkingLotCapacity("Alpha", 50)).thenReturn(null);
+        doThrow(NotFoundException.class).when(parkingLotService).updateParkingLotCapacity("Alpha", 50);
 
         ResultActions result = mvc.perform(patch("/parkinglots/Alpha")
                 .contentType(APPLICATION_JSON)
                 .content(mapToJson(Integer.valueOf("50"))));
 
-        result.andExpect(status().isNotFound());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()));
     }
 
     private ParkingLot createParkingLot(String name) {

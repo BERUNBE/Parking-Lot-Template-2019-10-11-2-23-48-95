@@ -2,6 +2,7 @@ package com.thoughtworks.parking_lot.service;
 
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -46,18 +48,18 @@ public class ParkingLotServiceTest {
     }
 
     @Test
-    void deleteParkingLot_should_return_true_when_deleting_existing_parkinglot() {
+    void deleteParkingLot_should_not_return_exception_deleting_existing_parkinglot() throws NotFoundException {
         ParkingLot parkingLot = createParkingLot("Alpha");
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLot));
 
-        assertThat(parkingLotService.deleteParkingLotByName("Alpha"), is(true));
+        parkingLotService.deleteParkingLotByName("Alpha");
     }
 
     @Test
-    void deleteParkingLot_should_return_false_when_attempting_to_delete_non_existing_parkinglot() {
+    void deleteParkingLot_should_throw_NotFoundException_when_attempting_to_delete_non_existing_parkinglot() throws NotFoundException {
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.empty());
 
-        assertThat(parkingLotService.deleteParkingLotByName("Alpha"), is(false));
+        assertThrows(NotFoundException.class, () -> parkingLotService.deleteParkingLotByName("Alpha"));
     }
 
     @Test
@@ -79,7 +81,7 @@ public class ParkingLotServiceTest {
     }
 
     @Test
-    void updateParkingLotCapacity_should_return_updated_parking_lot() {
+    void updateParkingLotCapacity_should_return_updated_parking_lot() throws NotFoundException {
         ParkingLot parkingLotToUpdate = createParkingLot("Alpha");
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLotToUpdate));
         ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity("Alpha", 20);
@@ -88,11 +90,10 @@ public class ParkingLotServiceTest {
     }
 
     @Test
-    void updateParkingLotCapacity_should_return_null_when_attempting_to_update_non_existing_parking_lot() {
+    void updateParkingLotCapacity_should_throw_NotFoundException_when_attempting_to_update_non_existing_parking_lot() throws NotFoundException {
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.empty());
-        ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity("Alpha", 20);
 
-        assertThat(updatedParkingLot, is(nullValue()));
+        assertThrows(NotFoundException.class, () -> parkingLotService.updateParkingLotCapacity("Alpha", 20));
     }
 
     private ParkingLot createParkingLot(String name) {
