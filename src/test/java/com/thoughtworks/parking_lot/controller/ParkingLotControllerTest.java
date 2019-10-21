@@ -60,7 +60,6 @@ public class ParkingLotControllerTest {
                 .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()));
     }
 
-
     @Test
     void deleteParkingLot_should_return_status_code_200() throws Exception {
         ResultActions result = mvc.perform(delete("/parkinglots/Alpha"));
@@ -127,6 +126,18 @@ public class ParkingLotControllerTest {
 
         result.andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    void updateParkingLotCapacity_should_return_status_code_400_when_attempting_to_update_existing_parkinglot_with_negative_capacity() throws Exception {
+        doThrow(BadRequestException.class).when(parkingLotService).updateParkingLotCapacity("Alpha", -1);
+
+        ResultActions result = mvc.perform(patch("/parkinglots/Alpha")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(Integer.valueOf("-1"))));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()));
     }
 
     private ParkingLot createParkingLot(String name, Integer capacity) {

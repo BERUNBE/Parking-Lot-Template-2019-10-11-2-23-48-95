@@ -42,7 +42,10 @@ public class ParkingLotService {
         return parkingLotRepository.findAll(PageRequest.of(page, PAGE_SIZE));
     }
 
-    public ParkingLot updateParkingLotCapacity(String name, int capacity) throws NotFoundException {
+    public ParkingLot updateParkingLotCapacity(String name, int capacity) throws NotFoundException, BadRequestException {
+        if (capacity < 0) {
+            throw new BadRequestException("Invalid capacity.");
+        }
         Optional<ParkingLot> parkingLotToUpdate = parkingLotRepository.findById(name);
         if (parkingLotToUpdate.isPresent()) {
             parkingLotToUpdate.get().setCapacity(capacity);

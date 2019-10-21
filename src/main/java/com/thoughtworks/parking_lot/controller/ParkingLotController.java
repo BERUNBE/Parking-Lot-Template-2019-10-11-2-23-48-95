@@ -38,7 +38,7 @@ public class ParkingLotController {
     }
 
     @PatchMapping(path = "/{name}", produces = {"application/json"})
-    public ResponseEntity<ParkingLot> updateParkingLotCapacity(@PathVariable String name, @RequestBody int capacity) throws NotFoundException {
+    public ResponseEntity<ParkingLot> updateParkingLotCapacity(@PathVariable String name, @RequestBody int capacity) throws NotFoundException, BadRequestException {
         ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity(name, capacity);
         return new ResponseEntity<>(updatedParkingLot, HttpStatus.OK);
     }

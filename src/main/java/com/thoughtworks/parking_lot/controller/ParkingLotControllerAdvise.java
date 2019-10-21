@@ -28,7 +28,7 @@ public class ParkingLotControllerAdvise {
     public CustomError handleBadRequestException(BadRequestException e) {
         CustomError customError = new CustomError();
         customError.setErrorMessage(e.getMessage());
-        customError.setCode(HttpStatus.NOT_FOUND.value());
+        customError.setCode(HttpStatus.BAD_REQUEST.value());
         return customError;
     }
 }

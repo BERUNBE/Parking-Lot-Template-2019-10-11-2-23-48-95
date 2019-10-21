@@ -89,7 +89,7 @@ public class ParkingLotServiceTest {
     }
 
     @Test
-    void updateParkingLotCapacity_should_return_updated_parking_lot() throws NotFoundException {
+    void updateParkingLotCapacity_should_return_updated_parking_lot() throws NotFoundException, BadRequestException {
         ParkingLot parkingLotToUpdate = createParkingLot("Alpha", 10);
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLotToUpdate));
         ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity("Alpha", 20);
@@ -102,6 +102,13 @@ public class ParkingLotServiceTest {
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> parkingLotService.updateParkingLotCapacity("Alpha", 20));
+    }
+
+    @Test
+    void updateParkingLotCapacity_should_throw_BadRequestException_when_attempting_to_update_existing_parkinglot_with_negative_capacity() {
+        when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.empty());
+
+        assertThrows(BadRequestException.class, () -> parkingLotService.updateParkingLotCapacity("Alpha", -1));
     }
 
     private ParkingLot createParkingLot(String name, Integer capacity) {
