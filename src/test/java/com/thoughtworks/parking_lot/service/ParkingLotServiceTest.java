@@ -11,16 +11,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -56,7 +54,7 @@ public class ParkingLotServiceTest {
     }
 
     @Test
-    void deleteParkingLot_should_throw_NotFoundException_when_attempting_to_delete_non_existing_parkinglot() throws NotFoundException {
+    void deleteParkingLot_should_throw_NotFoundException_when_attempting_to_delete_non_existing_parkinglot() {
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> parkingLotService.deleteParkingLotByName("Alpha"));
@@ -90,7 +88,7 @@ public class ParkingLotServiceTest {
     }
 
     @Test
-    void updateParkingLotCapacity_should_throw_NotFoundException_when_attempting_to_update_non_existing_parking_lot() throws NotFoundException {
+    void updateParkingLotCapacity_should_throw_NotFoundException_when_attempting_to_update_non_existing_parking_lot() {
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> parkingLotService.updateParkingLotCapacity("Alpha", 20));
