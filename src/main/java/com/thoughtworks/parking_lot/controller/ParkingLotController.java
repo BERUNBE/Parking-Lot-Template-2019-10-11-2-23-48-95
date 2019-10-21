@@ -21,9 +21,9 @@ public class ParkingLotController {
         return new ResponseEntity<>(parkingLotService.createParkingLot(parkingLot), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(produces = {"application/json"})
-    public ResponseEntity<Void> deleteParkingLot(@RequestBody ParkingLot parkingLot) {
-        if (parkingLotService.deleteParkingLot(parkingLot)) {
+    @DeleteMapping(path = "/{name}", produces = {"application/json"})
+    public ResponseEntity<Void> deleteParkingLot(@PathVariable String name) {
+        if (parkingLotService.deleteParkingLotByName(name)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

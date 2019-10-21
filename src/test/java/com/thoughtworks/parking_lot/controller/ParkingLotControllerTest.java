@@ -2,7 +2,6 @@ package com.thoughtworks.parking_lot.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.parking_lot.controller.ParkingLotController;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
 import org.junit.jupiter.api.Test;
@@ -46,12 +45,9 @@ public class ParkingLotControllerTest {
 
     @Test
     void deleteParkingLot_should_return_status_code_200() throws Exception {
-        ParkingLot parkingLot = createParkingLot("Alpha");
-        when(parkingLotService.deleteParkingLot(any())).thenReturn(true);
+        when(parkingLotService.deleteParkingLotByName(any())).thenReturn(true);
 
-        ResultActions result = mvc.perform(delete("/parkinglots")
-                .contentType(APPLICATION_JSON)
-                .content(mapToJson(parkingLot)));
+        ResultActions result = mvc.perform(delete("/parkinglots/Alpha"));
 
         result.andExpect(status().isOk());
     }

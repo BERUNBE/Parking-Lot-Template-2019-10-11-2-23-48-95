@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ParkingLotService {
@@ -18,8 +19,13 @@ public class ParkingLotService {
         return parkingLotRepository.save(parkingLot);
     }
 
-    public boolean deleteParkingLot(ParkingLot parkingLot) {
-        return false;
+    public boolean deleteParkingLotByName(String name) {
+        Optional<ParkingLot> parkingLotToBeDeleted = parkingLotRepository.findById(name);
+        if (parkingLotToBeDeleted.isPresent()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public ParkingLot getParkingLotByName(String name) {

@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Optional;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -32,5 +34,19 @@ public class ParkingLotServiceTest {
         parkingLot = parkingLotService.createParkingLot(parkingLot);
 
         assertThat(parkingLot, is(notNullValue()));
+    }
+
+    @Test
+    void deleteParkingLot_should_return_true_when_deleting_existing_parkinglot() {
+        ParkingLot parkingLot = createParkingLot("Alpha");
+        when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLot));
+
+        assertThat(parkingLotService.deleteParkingLotByName("Alpha"), is(true));
+    }
+
+    private ParkingLot createParkingLot(String name) {
+        ParkingLot parkingLot = new ParkingLot();
+        parkingLot.setName(name);
+        return parkingLot;
     }
 }
