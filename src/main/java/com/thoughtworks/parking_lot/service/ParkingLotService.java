@@ -1,5 +1,6 @@
 package com.thoughtworks.parking_lot.service;
 
+import com.thoughtworks.parking_lot.exception.BadRequestException;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import javassist.NotFoundException;
@@ -17,7 +18,10 @@ public class ParkingLotService {
     @Autowired
     private ParkingLotRepository parkingLotRepository;
 
-    public ParkingLot createParkingLot(ParkingLot parkingLot) {
+    public ParkingLot createParkingLot(ParkingLot parkingLot) throws BadRequestException {
+        if (parkingLot.getCapacity() < 0) {
+            throw new BadRequestException("Invalid capacity.");
+        }
         return parkingLotRepository.save(parkingLot);
     }
 

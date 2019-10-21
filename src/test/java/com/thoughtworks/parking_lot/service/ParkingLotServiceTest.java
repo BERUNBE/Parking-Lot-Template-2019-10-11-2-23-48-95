@@ -1,5 +1,6 @@
 package com.thoughtworks.parking_lot.service;
 
+import com.thoughtworks.parking_lot.exception.BadRequestException;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import javassist.NotFoundException;
@@ -37,8 +38,8 @@ public class ParkingLotServiceTest {
     private ParkingLotService parkingLotService;
 
     @Test
-    void createParkingLot_should_return_parkinglot() {
-        ParkingLot parkingLot = new ParkingLot();
+    void createParkingLot_should_return_parkinglot() throws BadRequestException {
+        ParkingLot parkingLot = createParkingLot("Alpha", 10);
         when(parkingLotRepository.save(any())).thenReturn(parkingLot);
         parkingLot = parkingLotService.createParkingLot(parkingLot);
 
@@ -46,8 +47,17 @@ public class ParkingLotServiceTest {
     }
 
     @Test
+    void createParkingLot_should_throw_BadRequestException_when_creating_parking_lot_with_negative_capacity() {
+        ParkingLot parkingLot = createParkingLot("Alpha", -1);
+        parkingLot.setCapacity(-10);
+        when(parkingLotRepository.save(any())).thenReturn(parkingLot);
+
+        assertThrows(BadRequestException.class, () -> parkingLotService.createParkingLot(parkingLot));
+    }
+
+    @Test
     void deleteParkingLot_should_not_return_exception_deleting_existing_parkinglot() throws NotFoundException {
-        ParkingLot parkingLot = createParkingLot("Alpha");
+        ParkingLot parkingLot = createParkingLot("Alpha", 10);
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLot));
 
         parkingLotService.deleteParkingLotByName("Alpha");
@@ -62,7 +72,7 @@ public class ParkingLotServiceTest {
 
     @Test
     void getParkingLotByName_should_return_one_parking_lot_by_name() {
-        ParkingLot parkingLot = createParkingLot("Alpha");
+        ParkingLot parkingLot = createParkingLot("Alpha", 10);
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLot));
 
         assertThat(parkingLotService.getParkingLotByName("Alpha"), is(parkingLot));
@@ -70,8 +80,8 @@ public class ParkingLotServiceTest {
 
     @Test
     void getParkingLots_should_return_page_of_parking_lots() {
-        ParkingLot parkingLot1 = createParkingLot("Alpha");
-        ParkingLot parkingLot2 = createParkingLot("Bravo");
+        ParkingLot parkingLot1 = createParkingLot("Alpha", 10);
+        ParkingLot parkingLot2 = createParkingLot("Bravo", 10);
         Page<ParkingLot> page = new PageImpl<>(Arrays.asList(parkingLot1, parkingLot2));
         when(parkingLotRepository.findAll(PageRequest.of(PAGE, PAGE_SIZE))).thenReturn(page);
 
@@ -80,7 +90,7 @@ public class ParkingLotServiceTest {
 
     @Test
     void updateParkingLotCapacity_should_return_updated_parking_lot() throws NotFoundException {
-        ParkingLot parkingLotToUpdate = createParkingLot("Alpha");
+        ParkingLot parkingLotToUpdate = createParkingLot("Alpha", 10);
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLotToUpdate));
         ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity("Alpha", 20);
 
@@ -94,9 +104,10 @@ public class ParkingLotServiceTest {
         assertThrows(NotFoundException.class, () -> parkingLotService.updateParkingLotCapacity("Alpha", 20));
     }
 
-    private ParkingLot createParkingLot(String name) {
+    private ParkingLot createParkingLot(String name, Integer capacity) {
         ParkingLot parkingLot = new ParkingLot();
         parkingLot.setName(name);
+        parkingLot.setCapacity(capacity);
         return parkingLot;
     }
 }

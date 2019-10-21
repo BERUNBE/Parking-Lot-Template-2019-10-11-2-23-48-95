@@ -1,5 +1,6 @@
 package com.thoughtworks.parking_lot.controller;
 
+import com.thoughtworks.parking_lot.exception.BadRequestException;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
 import javassist.NotFoundException;
@@ -16,7 +17,7 @@ public class ParkingLotController {
     private ParkingLotService parkingLotService;
 
     @PostMapping(produces = {"application/json"})
-    public ResponseEntity<ParkingLot> createParkingLot(@RequestBody ParkingLot parkingLot) {
+    public ResponseEntity<ParkingLot> createParkingLot(@RequestBody ParkingLot parkingLot) throws BadRequestException {
         return new ResponseEntity<>(parkingLotService.createParkingLot(parkingLot), HttpStatus.CREATED);
     }
 
