@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -21,6 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ParkingLotController.class)
 public class ParkingLotControllerTest {
+
+    private static final Integer PAGE = 0;
 
     @MockBean
     private ParkingLotService parkingLotService;
@@ -54,7 +57,7 @@ public class ParkingLotControllerTest {
     }
 
     @Test
-    void getParkingLot_should_return_one_parking_lot_by_name_and_status_code_200() throws Exception {
+    void getParkingLotByName_should_return_one_parking_lot_by_name_and_status_code_200() throws Exception {
         ParkingLot parkingLot = createParkingLot("Alpha");
         when(parkingLotService.getParkingLotByName("Alpha")).thenReturn(parkingLot);
 
@@ -62,6 +65,20 @@ public class ParkingLotControllerTest {
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Alpha"));
+    }
+
+    @Test
+    void getAllParkingLots_should_return_parking_lots_and_status_code_200() throws Exception {
+        ParkingLot parkingLot1 = createParkingLot("Alpha");
+        ParkingLot parkingLot2 = createParkingLot("Bravo");
+        when(parkingLotService.getParkingLots(PAGE)).thenReturn(asList(parkingLot1, parkingLot2));
+
+        ResultActions result = mvc.perform(get("/parkinglots")
+                .param("page", PAGE.toString()));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Alpha"))
+                .andExpect(jsonPath("$[1].name").value("Bravo"));
     }
 
     private ParkingLot createParkingLot(String name) {

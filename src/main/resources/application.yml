@@ -1,10 +1,10 @@
 logging.file: logs/application.log
 logging:
   level:
-      org:
-        springframework:
-          web: DEBUG
-        hibernate: ERROR
+    org:
+      springframework:
+        web: DEBUG
+      hibernate: ERROR
 spring:
   h2:
     console:
