@@ -3,14 +3,13 @@ package com.thoughtworks.parking_lot.service;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ParkingLotService {
+
+    private static final int PAGE_SIZE = 15;
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
@@ -27,8 +26,8 @@ public class ParkingLotService {
         return parkingLotRepository.findById(name).get();
     }
 
-    public List<ParkingLot> getParkingLots(int page) {
-        return new ArrayList<>();
+    public Iterable<ParkingLot> getParkingLots(int page) {
+        return parkingLotRepository.findAll(PageRequest.of(page, PAGE_SIZE));
     }
 
     public ParkingLot updateParkingLotCapacity(String name, int capacity) {

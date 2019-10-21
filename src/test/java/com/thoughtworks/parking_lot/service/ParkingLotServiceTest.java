@@ -7,10 +7,17 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -20,6 +27,9 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ParkingLotServiceTest {
+
+    private static final int PAGE = 0;
+    private static final int PAGE_SIZE = 15;
 
     @MockBean
     private ParkingLotRepository parkingLotRepository;
@@ -57,6 +67,16 @@ public class ParkingLotServiceTest {
         when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLot));
 
         assertThat(parkingLotService.getParkingLotByName("Alpha"), is(parkingLot));
+    }
+
+    @Test
+    void getParkingLots_should_return_page_of_parking_lots() {
+        ParkingLot parkingLot1 = createParkingLot("Alpha");
+        ParkingLot parkingLot2 = createParkingLot("Bravo");
+        Page<ParkingLot> page = new PageImpl<>(Arrays.asList(parkingLot1, parkingLot2));
+        when(parkingLotRepository.findAll(PageRequest.of(PAGE, PAGE_SIZE))).thenReturn(page);
+
+        assertThat(parkingLotService.getParkingLots(PAGE), is(page));
     }
 
     private ParkingLot createParkingLot(String name) {

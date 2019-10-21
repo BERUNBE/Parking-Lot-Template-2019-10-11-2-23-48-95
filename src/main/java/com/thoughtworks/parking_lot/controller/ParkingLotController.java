@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/parkinglots")
 public class ParkingLotController {
@@ -36,7 +34,7 @@ public class ParkingLotController {
     }
 
     @GetMapping(produces = {"application/json"})
-    public ResponseEntity<List<ParkingLot>> getParkingLots(@RequestParam(required = false, defaultValue = "0") int page) {
+    public ResponseEntity<Iterable<ParkingLot>> getParkingLots(@RequestParam(required = false, defaultValue = "0") int page) {
         return new ResponseEntity<>(parkingLotService.getParkingLots(page), HttpStatus.OK);
     }
 
