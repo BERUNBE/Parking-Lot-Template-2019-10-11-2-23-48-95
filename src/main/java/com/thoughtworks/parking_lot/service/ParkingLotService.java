@@ -24,7 +24,7 @@ public class ParkingLotService {
     }
 
     public ParkingLot getParkingLotByName(String name) {
-        return null;
+        return parkingLotRepository.findById(name).get();
     }
 
     public List<ParkingLot> getParkingLots(int page) {

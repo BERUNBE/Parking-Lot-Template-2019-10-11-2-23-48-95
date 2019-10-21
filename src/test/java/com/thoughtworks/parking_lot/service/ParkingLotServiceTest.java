@@ -51,6 +51,14 @@ public class ParkingLotServiceTest {
         assertThat(parkingLotService.deleteParkingLotByName("Alpha"), is(false));
     }
 
+    @Test
+    void getParkingLotByName_should_return_one_parking_lot_by_name() {
+        ParkingLot parkingLot = createParkingLot("Alpha");
+        when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLot));
+
+        assertThat(parkingLotService.getParkingLotByName("Alpha"), is(parkingLot));
+    }
+
     private ParkingLot createParkingLot(String name) {
         ParkingLot parkingLot = new ParkingLot();
         parkingLot.setName(name);
