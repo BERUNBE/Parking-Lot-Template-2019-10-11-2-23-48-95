@@ -26,7 +26,7 @@ public class ParkingLotController {
         if (parkingLotService.deleteParkingLotByName(name)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -46,7 +46,7 @@ public class ParkingLotController {
         if (updatedParkingLot != null) {
             return new ResponseEntity<>(updatedParkingLot, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
