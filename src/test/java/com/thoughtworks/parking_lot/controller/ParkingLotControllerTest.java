@@ -1,4 +1,4 @@
-package com.thoughtworks.parking_lot;
+package com.thoughtworks.parking_lot.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
