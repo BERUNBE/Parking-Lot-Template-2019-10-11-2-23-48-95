@@ -19,8 +19,7 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -77,6 +76,23 @@ public class ParkingLotServiceTest {
         when(parkingLotRepository.findAll(PageRequest.of(PAGE, PAGE_SIZE))).thenReturn(page);
 
         assertThat(parkingLotService.getParkingLots(PAGE), is(page));
+    }
+
+    @Test
+    void updateParkingLotCapacity_should_return_updated_parking_lot() {
+        ParkingLot parkingLotToUpdate = createParkingLot("Alpha");
+        when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.of(parkingLotToUpdate));
+        ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity("Alpha", 20);
+
+        assertThat(updatedParkingLot.getCapacity(), is(20));
+    }
+
+    @Test
+    void updateParkingLotCapacity_should_return_null_when_attempting_to_update_non_existing_parking_lot() {
+        when(parkingLotRepository.findById("Alpha")).thenReturn(Optional.empty());
+        ParkingLot updatedParkingLot = parkingLotService.updateParkingLotCapacity("Alpha", 20);
+
+        assertThat(updatedParkingLot, is(nullValue()));
     }
 
     private ParkingLot createParkingLot(String name) {

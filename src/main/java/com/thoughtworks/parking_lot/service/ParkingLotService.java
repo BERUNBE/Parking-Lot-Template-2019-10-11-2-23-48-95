@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ParkingLotService {
 
@@ -19,7 +21,13 @@ public class ParkingLotService {
     }
 
     public boolean deleteParkingLotByName(String name) {
-        return parkingLotRepository.findById(name).isPresent();
+        Optional<ParkingLot> parkingLotToDelete = parkingLotRepository.findById(name);
+        if (parkingLotToDelete.isPresent()) {
+            parkingLotRepository.delete(parkingLotToDelete.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public ParkingLot getParkingLotByName(String name) {
@@ -31,6 +39,12 @@ public class ParkingLotService {
     }
 
     public ParkingLot updateParkingLotCapacity(String name, int capacity) {
-        return null;
+        Optional<ParkingLot> parkingLotToUpdate = parkingLotRepository.findById(name);
+        if (parkingLotToUpdate.isPresent()) {
+            parkingLotToUpdate.get().setCapacity(capacity);
+            return parkingLotToUpdate.get();
+        } else {
+            return null;
+        }
     }
 }
