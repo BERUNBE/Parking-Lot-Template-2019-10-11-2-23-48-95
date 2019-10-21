@@ -2,6 +2,7 @@ package com.thoughtworks.parking_lot.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.parking_lot.exception.BadRequestException;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
 import javassist.NotFoundException;
@@ -35,7 +36,7 @@ public class ParkingLotControllerTest {
 
     @Test
     void createParkingLot_should_return_created_parking_lot_and_status_code_201() throws Exception {
-        ParkingLot parkingLot = createParkingLot("Alpha");
+        ParkingLot parkingLot = createParkingLot("Alpha", 10);
         when(parkingLotService.createParkingLot(any())).thenReturn(parkingLot);
 
         ResultActions result = mvc.perform(post("/parkinglots")
@@ -45,6 +46,20 @@ public class ParkingLotControllerTest {
         result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Alpha"));
     }
+
+    @Test
+    void createParkingLot_should_return_status_code_400_when_capacity_is_negative() throws Exception {
+        ParkingLot parkingLot = createParkingLot("Alpha", -1);
+        doThrow(BadRequestException.class).when(parkingLotService).createParkingLot(any());
+
+        ResultActions result = mvc.perform(post("/parkinglots")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(parkingLot)));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()));
+    }
+
 
     @Test
     void deleteParkingLot_should_return_status_code_200() throws Exception {
@@ -65,7 +80,7 @@ public class ParkingLotControllerTest {
 
     @Test
     void getParkingLotByName_should_return_one_parking_lot_by_name_and_status_code_200() throws Exception {
-        ParkingLot parkingLot = createParkingLot("Alpha");
+        ParkingLot parkingLot = createParkingLot("Alpha", 10);
         when(parkingLotService.getParkingLotByName("Alpha")).thenReturn(parkingLot);
 
         ResultActions result = mvc.perform(get("/parkinglots/Alpha"));
@@ -76,8 +91,8 @@ public class ParkingLotControllerTest {
 
     @Test
     void getAllParkingLots_should_return_parking_lots_and_status_code_200() throws Exception {
-        ParkingLot parkingLot1 = createParkingLot("Alpha");
-        ParkingLot parkingLot2 = createParkingLot("Bravo");
+        ParkingLot parkingLot1 = createParkingLot("Alpha", 10);
+        ParkingLot parkingLot2 = createParkingLot("Bravo", 10);
         when(parkingLotService.getParkingLots(PAGE)).thenReturn(asList(parkingLot1, parkingLot2));
 
         ResultActions result = mvc.perform(get("/parkinglots")
@@ -90,7 +105,7 @@ public class ParkingLotControllerTest {
 
     @Test
     void updateParkingLotCapacity_should_update_parking_lot_capacity_and_return_updated_parking_lot_and_status_code_200() throws Exception {
-        ParkingLot parkingLot = createParkingLot("Alpha");
+        ParkingLot parkingLot = createParkingLot("Alpha", 10);
         parkingLot.setCapacity(50);
         when(parkingLotService.updateParkingLotCapacity("Alpha", 50)).thenReturn(parkingLot);
 
@@ -114,9 +129,10 @@ public class ParkingLotControllerTest {
                 .andExpect(jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()));
     }
 
-    private ParkingLot createParkingLot(String name) {
+    private ParkingLot createParkingLot(String name, Integer capacity) {
         ParkingLot parkingLot = new ParkingLot();
         parkingLot.setName(name);
+        parkingLot.setCapacity(capacity);
         return parkingLot;
     }
 
