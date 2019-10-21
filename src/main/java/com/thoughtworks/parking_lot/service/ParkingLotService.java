@@ -20,12 +20,7 @@ public class ParkingLotService {
     }
 
     public boolean deleteParkingLotByName(String name) {
-        Optional<ParkingLot> parkingLotToBeDeleted = parkingLotRepository.findById(name);
-        if (parkingLotToBeDeleted.isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return parkingLotRepository.findById(name).isPresent();
     }
 
     public ParkingLot getParkingLotByName(String name) {
